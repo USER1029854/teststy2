@@ -1,0 +1,8 @@
+[profile.default]
+src = "src"
+test = "test"
+out = "out"
+libs = ["lib"]
+fs_permissions = [{ access = "read", path = "./"}]
+[rpc_endpoints]
+bsc = "https://bsc-dataseed.binance.org"

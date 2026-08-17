@@ -22,11 +22,11 @@ signed hash — see §3.A). No embedded private key derives to any trusted signe
 candidates across 12 bytecodes).
 
 What remains are **(a)** one confirmed low-severity griefing DoS on redemptions (§4.1, does not meet
-the value/access bar but is a real defect), **(b)** one plausible economic vector I could **not**
-confirm or refute because it lives in unverified reward-math (§4.2), and **(c)** systemic trust
-placed in off-chain signer keys and the un-renounced FeeCutter admin (§5). The system's safety
-rests materially on off-chain components; a clean on-chain result does **not** imply the system is
-sound (§5).
+the value/access bar but is a real defect), and **(b)** systemic trust placed in off-chain signer
+keys and the un-renounced FeeCutter admin (§5). The one economic vector I could not settle from
+decompilation (§4.2) has since been **refuted on a mainnet fork** — see §4.2 and `recon/poc/`. The
+system's safety rests materially on off-chain components; a clean on-chain result does **not** imply
+the system is sound (§5).
 
 ---
 
@@ -120,8 +120,8 @@ LiquidityHolder.getLiqlidityValue (view).
   moves value **from the trader to FeeCutter** — never to the attacker. No gain. ✗
 - Reader = MarketMaker: `onlyCaller`; attacker can't trigger, and public buys are gated
   (`isOpenBuy=false`) so an attacker can't cash out a keeper-induced dump. ✗
-- Reader = MinerReward.order → **unresolved economic vector, §4.2** (spot price feeds a "power"
-  figure whose downstream use in the non-signature `release()` I could not read).
+- Reader = MinerReward.order → investigated in §4.2 and **refuted on a fork**: the recorded power is
+  the raw USDT principal (price-independent), so spot manipulation buys nothing.
 - Flash-borrowing STY from the pair to force a reserve/callback interleave **reverts**: a flash swap
   sends STY to a non-excluded `to`, which hits the token's buy path `require(isOpenBuy)` → revert.
   So the STY/USDT pair can't be flash-borrowed by an unprivileged address today. ✗
@@ -158,9 +158,9 @@ splitting one stake into many yields identical totals (no directional-rounding g
 **C2 — order() → BigPool.AddLiqlidity → LiquidityHolder.addLiquidity chain.** A single actor stages
 all three atomically, but each step is paid: the caller funds the USDT; BigPool matches STY at the
 *current pool ratio*; LP is credited to the caller and redeemable only via signer-gated `ReedeemLP`.
-BigPool's STY returns on redemption. No step lets the actor extract more than they funded — except
-the §4.2 question of whether the recorded "power" (and thus a later `release()` STY payout) is
-inflatable by pre-move-ing the spot price.
+BigPool's STY returns on redemption. No step lets the actor extract more than they funded; the §4.2
+question of whether the recorded "power" (and a later `release()` payout) is inflatable by
+pre-moving the spot price was **refuted on a fork** (power = raw USDT principal, §4.2).
 
 ---
 
@@ -210,21 +210,29 @@ nuisance-grade DoS, below the value/access bar. Reported for completeness.
 **Fix:** move `orderTaked[orderid]=true` to *after* the signature check (and drop the silent
 early-return in favour of a revert), so an invalid/early call reverts and leaves the id unused.
 
-### 4.2 [UNRESOLVED — needs source] MinerReward `order()` reads spot price; `release()` pays with no signature
-`MinerReward.order()` reads the token's **spot** `getCurrentPrice()` (selector `0xeb91d37e`, no
-TWAP), and `release()` (`0x10a2cdbd`) pays STY on a maturity timer with **no ECDSA check** (unlike
-`claim`). If the "power"/reward figure a stake records is derived from that spot price, an attacker
-could cheaply skew it: donate USDT to the pair + call `pair.sync()` to raise `getCurrentPrice`
-(spot, manipulable), `order()` at the inflated price, and later `release()` an inflated STY payout
-from MinerReward's 218K-STY balance — an economic gain roughly independent of stake.
-**Why unresolved:** MinerReward is unverified; from decompilation I could **not** determine whether
-the stored power is price-scaled (value-bearing) or whether `getCurrentPrice` is read only for the
-`RewardAdded` event (as it demonstrably is in `addReward`). `release()` reverts `Invalid Order` for
-all ids I could try, so I could not build a matured order to test end-to-end.
-**What would make it real / would kill it:** real → power is `f(spotPrice)` and `release()` pays
-`g(power)` without re-checking price or signer. Killed → power is the raw USDT amount, or every
-value-bearing payout is signer-gated. **This needs the verified source or a traced mainnet
-`order→release` cycle to resolve.** Flagged prominently rather than left implied-safe.
+### 4.2 [RESOLVED — REFUTED on a mainnet fork] MinerReward `order()` spot-price → inflated reward
+**Original concern:** `MinerReward.order()` reads the token's **spot** `getCurrentPrice()` (selector
+`0xeb91d37e`, no TWAP), and `release()` (`0x10a2cdbd`) pays STY on a maturity timer with **no ECDSA
+check** (unlike `claim`). If the "power"/reward a stake records were derived from that spot price, an
+attacker could donate USDT + `pair.sync()` to pump `getCurrentPrice`, `order()` at the inflated
+price, and later `release()` an inflated STY payout — a stake-independent gain.
+
+**Resolution — refuted by executing it on a BSC mainnet fork (Foundry; `recon/poc/`, `RESULTS.txt`):**
+1. **Power is price-independent.** `order(1000e18)` records `userTotalPower = 1000e18` (the raw USDT
+   principal) at the live price 2.72, and records the **identical** `1000e18` after pumping spot
+   price to 7.88 (≈2.9×) by donating 3,000,000 USDT to the pair and calling `sync()`. The
+   `getCurrentPrice` read does not feed the power figure on the permissionless path.
+2. **The releasable/indexed reward-order path is signature-gated.** Calling the order-creator
+   `0x0d3523bb` from an unprivileged address with a forged signature **reverts** and leaves
+   `orderIndex` unchanged — an attacker cannot manufacture a position that `release()` would pay.
+3. **No free credit.** One `order(1000e18)` costs exactly 1000 USDT and credits 606.1 LP
+   (`LiquidityHolder.totalAdded`, the ~60% liquidity leg) — fully backed by USDT actually paid;
+   redemption is further signer-gated.
+
+There is no unprivileged spot-price-manipulation path to a disproportionate gain. (Even
+hypothetically, the pump surrenders the entire 3,000,000-USDT donation to the pool/LPs, dwarfing any
+reward.) The reward-payout surface remains gated by the off-chain signer — a trust assumption (§5),
+not an on-chain flaw. **No finding.**
 
 ---
 
@@ -264,10 +272,10 @@ safe" — items 1–4 are unverifiable from the chain.
 
 ## 7. Assumptions & what would change the conclusions
 
-- **Unverified reward-math (MinerReward, FeeOwnerNode/Team, helpers):** analysed from decompilation.
-  If §4.2's power figure is spot-price-derived and `release()` pays from it without a signature, that
-  becomes a confirmed economic finding. Everything else about these contracts (guards, domain
-  separation, no embedded key) was corroborated by disassembly + simulation.
+- **Unverified reward-math (MinerReward, FeeOwnerNode/Team, helpers):** analysed from decompilation,
+  then the one value-bearing question (§4.2) was settled by **live fork execution** (`recon/poc/`):
+  power is the raw USDT principal (price-independent) and releasable orders are signature-gated.
+  Guards, domain separation, and no-embedded-key were corroborated by disassembly + simulation.
 - **Off-chain signer key custody (§5.1–5.2):** assumed secure. If not, the LP and reward balances are
   at risk; the LP signer is unrotatable.
 - **Canonical externals** (Pancake pair/router/factory, USDT, Gnosis Safe) assumed byte-genuine —

@@ -1,0 +1,54 @@
+Ran 2 tests for test/Probe.t.sol:Probe2
+[PASS] test_indexed_order_is_signature_gated() (gas: 19764)
+Logs:
+  indexed-order call from attacker succeeded? no (reverted)
+    revert: (no reason bytes)
+  orderIndex before 88033
+  orderIndex after  88033
+
+[PASS] test_order_totalAdded_backed_by_principal() (gas: 369630)
+Logs:
+  LH.totalAdded(ATK) before 0
+  USDT actually spent (of 2000) 1000000000000000000000
+  MR.userTotalPower(ATK) 1000000000000000000000
+  LH.totalAdded(ATK) after (LP credited) 606124629773620132288
+  LH.userTaked(ATK) 0
+
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 3.86s (4.83s CPU time)
+
+Ran 1 test for test/Probe.t.sol:Probe
+[PASS] test_order_power() (gas: 818877)
+Logs:
+  MR.isCaller(STY) yes
+  BEFORE order (normal price)
+    spot price 1e18 2719774358784827383
+    MR.orderIndex 88033
+    power(ATK) 0
+    takedA(ATK) 0
+    ATK USDT 0
+    ATK STY 0
+  order(1000e18) OK
+  AFTER order (normal price)
+    spot price 1e18 2719774358784827383
+    MR.orderIndex 88033
+    power(ATK) 1000000000000000000000
+    takedA(ATK) 0
+    ATK USDT 1000000000000000000000
+    ATK STY 0
+  spot price AFTER manipulation 7881962848904634673
+  order(1000e18) OK @inflated
+  AFTER order (inflated price)
+    spot price 1e18 7881962848904634673
+    MR.orderIndex 88033
+    power(ATK) 1000000000000000000000
+    takedA(ATK) 0
+    ATK USDT 1000000000000000000000
+    ATK STY 0
+  =================== RESULT ===================
+  power recorded @ normal price   1000000000000000000000
+  power recorded @ inflated price 1000000000000000000000
+  >> power is PRICE-INDEPENDENT for order()
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.86s (3.86s CPU time)
+
+Ran 2 test suites in 3.86s (7.72s CPU time): 3 tests passed, 0 failed, 0 skipped (3 total tests)
