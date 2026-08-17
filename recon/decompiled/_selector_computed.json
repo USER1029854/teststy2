@@ -1,0 +1,50 @@
+{
+  "0x6564c61e": [
+    "CutBuyFee()"
+  ],
+  "0x9e94f03d": [
+    "CutSellFee(uint256)"
+  ],
+  "0xf5089a10": [
+    "cutSellBurn(uint256)"
+  ],
+  "0xbe8531a9": [
+    "CutProfit(uint256)"
+  ],
+  "0x99522174": [
+    "FeeOwnerCollege()"
+  ],
+  "0xdcded11a": [
+    "FeeOwnerNode()"
+  ],
+  "0xb0fa73d9": [
+    "FeeOwnerTeam()"
+  ],
+  "0x8ac77ea6": [
+    "TeamA()"
+  ],
+  "0x71591565": [
+    "TeamB()"
+  ],
+  "0x6cfb6bf9": [
+    "setAddresses(address,address,address,address,address,address)"
+  ],
+  "0x558a7297": [
+    "setOperator(address,bool)"
+  ],
+  "0x9cae6eae": [
+    "setCaller(address,bool)"
+  ],
+  "0xb9a02901": [
+    "claim(uint256,uint256,uint256,string)"
+  ],
+  "0xc6d716f2": [
+    "takeOutErrorTransfer(address,address,uint256)"
+  ],
+  "0x1c4fcb22": [
+    "setAddress(address,address,address,address,address,address,address)"
+  ],
+  "0xb13d486e": [
+    "userTaked(address)"
+  ]
+}

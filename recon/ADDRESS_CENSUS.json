@@ -1,0 +1,200 @@
+{
+  "chain": "BNB Smart Chain (BSC) mainnet, chainId 56",
+  "snapshot_block": 116442814,
+  "snapshot_note": "Balances/config read live around block ~116.44M / 2026-08-17. Re-read before relying on state.",
+  "target": {
+    "address": "0xD6A4F5AADD88ebA9A170AcF67f737BD488142857",
+    "name": "STYTOKEN (SWAN TREASURY / STY)",
+    "kind": "BEP20 token (custom, non-standard transfer logic)",
+    "verified": true,
+    "location": "contracts/target/STYTOKEN.sol",
+    "owner_live": "0x0000000000000000000000000000000000000000 (RENOUNCED)",
+    "notes": "18 decimals, totalSupply 9,999,990. Custom _transfer applies buy/sell/profit/burn fees routed to FeeCutter, plus a permissionless 1%/round AMM-pool skim to MinerRewardContract."
+  },
+  "pair": {
+    "address": "0x2BE23D76F423bf464F310aD98749d82691Ecc830",
+    "name": "PancakePair (STY/USDT)",
+    "kind": "Canonical PancakeSwap V2 pair",
+    "verified": true,
+    "location": "contracts/pair/PancakePair.sol",
+    "token0": "0x55d398326f99059fF775485246999027B3197955 (USDT)",
+    "token1": "0xD6A4F5AADD88ebA9A170AcF67f737BD488142857 (STY)",
+    "reserves_live": {"USDT": 1577401.92, "STY": 579938.01, "LP_totalSupply": 1593454.64},
+    "created_by_factory": "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
+  },
+  "value_path_contracts": [
+    {
+      "address": "0x729d05b4b45f5ad101f44b3b0c01e824972312d0",
+      "name": "FeeCutter",
+      "verified_onchain": false,
+      "source_available": "YES - identical contract source is in the VERIFIED STYTOKEN.sol (same compilation unit); deployed bytecode function-set confirmed by decompilation",
+      "location": "contracts/unverified/FeeCutter/",
+      "role": "Receives STY fees skimmed by STYTOKEN._transfer; swaps STY->USDT via PancakeRouter and distributes to fee owners; also splits burn/profit cuts.",
+      "authorities_live": {
+        "superowner (slot0)": "0xd8d76d04da5ec32d84edbd560916b1edd2194e8f (deployer EOA)",
+        "operator (isOperator)": "0xD6A4F5AA...142857 (STYTOKEN only)",
+        "FeeOwnerCollege": "0xf255a4e760e4ddce693a6ab6a240559b9909512c",
+        "FeeOwnerNode": "0x024647750c9b261960fbaf61899f25346cb19223",
+        "FeeOwnerTeam": "0x955ca4890461c134ead18420788b4d9862b0f2ab",
+        "TeamA": "0x492cfa70f0ba9fa3478a409fe2f28637f3311929",
+        "TeamB": "0x5205b84839fc5d650448d5732d87e65fb18bc522",
+        "usdt": "0x55d398326f99059fF775485246999027B3197955"
+      }
+    },
+    {
+      "address": "0x758905b399f4216e9e3ff791eea16c05c91a1a88",
+      "name": "MinerRewardContract",
+      "verified_onchain": false,
+      "source_available": "NO - recovered by decompilation",
+      "location": "contracts/unverified/MinerRewardContract/",
+      "role": "Receives 1%/round STY skim from STYTOKEN.cutAmmPoolToMinerReward + fee addReward() calls. Staking/reward hub: order(uint256) permissionless staking (amount>100), signature-gated claim(s) via ecrecover against a signer.",
+      "sty_balance_live": 217918.96,
+      "authorities_live": {
+        "owner (slot0)": "0x33992f55832af553310489e1c808be007b117063",
+        "signer (slot20)": "0xa22ceb70389d918899111db96dc44be66ab6ae1b",
+        "usdt (slot3)": "0x55d398326f99059fF775485246999027B3197955",
+        "stytoken (slot4)": "0xD6A4F5AA...142857"
+      },
+      "references": [
+        "0x492cfa70f0ba9fa3478a409fe2f28637f3311929 (MarketMaker)",
+        "0x3c9b8992d1c6897628f2a86c2d3a09d63923fd00 (helper)",
+        "0xf255a4e760e4ddce693a6ab6a240559b9909512c (College Safe)",
+        "0x024647750c9b261960fbaf61899f25346cb19223 (FeeOwnerNode)",
+        "0xccb498f56eb836343a352e6169033e411d6891db (LiquidityHolder)",
+        "0xdb2dc12d9befaefa4c0ca0eafc86f9660b16143d (BigPool)",
+        "8x FeeOwnerTeam-shape reward-pool clones + 1 variant"
+      ]
+    },
+    {
+      "address": "0x024647750c9b261960fbaf61899f25346cb19223",
+      "name": "FeeOwnerNode",
+      "verified_onchain": false,
+      "source_available": "NO - recovered by decompilation",
+      "location": "contracts/unverified/FeeOwnerNode/",
+      "role": "Node reward pool. Receives USDT from FeeCutter (CutSellFee/CutProfit) and addReward(). claim(uint256,uint256,uint256,string) gated by ecrecover==signer; reads balanceOf/tokenOfOwnerByIndex on 3 hardcoded STYNODE NFT contracts.",
+      "usdt_balance_live": 16934.54,
+      "authorities_live": {
+        "owner (slot0)": "0x33992f55832af553310489e1c808be007b117063",
+        "signer (slot5)": "0xa22ceb70389d918899111db96dc44be66ab6ae1b",
+        "storeH (slot9)": "0xcaecc8a5aa285b211de5af16b2b756e2e48721f5"
+      },
+      "hardcoded_in_bytecode": [
+        "0x03151771ee8b335bb3c0772f8a35e03b323c7560 (STYNODE2 NFT)",
+        "0x3d980e120e30e87fc203098785fff42681bfb743 (STYNODE2 NFT)",
+        "0xec1822f4ca5060d2740f1114b7ca44f3fba99933 (STYNODE1 NFT)"
+      ]
+    },
+    {
+      "address": "0x955ca4890461c134ead18420788b4d9862b0f2ab",
+      "name": "FeeOwnerTeam",
+      "verified_onchain": false,
+      "source_available": "NO - recovered by decompilation",
+      "location": "contracts/unverified/FeeOwnerTeam/",
+      "role": "Team reward pool. Receives USDT from FeeCutter (CutSellFee/CutProfit) and addReward(). Signature-gated claim.",
+      "usdt_balance_live": 11878.10,
+      "authorities_live": {
+        "owner (slot0)": "0x33992f55832af553310489e1c808be007b117063",
+        "signer (slot2)": "0xa22ceb70389d918899111db96dc44be66ab6ae1b",
+        "usdt (slot1)": "0x55d398326f99059fF775485246999027B3197955"
+      },
+      "bytecode_clones": [
+        "0x955ca4890461c134ead18420788b4d9862b0f2ab (this / FeeOwnerTeam)",
+        "0x473aea0ce9292503ceb9bbef71b2441656f7c7cf",
+        "0x8a7306e2cd4feef9b70c8d74ddeda7bc12231eee",
+        "0xb09111ff38c0674c28a96e6ff9c088cb56442aa7",
+        "0x2e1928aba1dfdb27c9a1e2b610c0aa425fa6b6cd",
+        "0xc3787015855adc780633bcf103352752f8d35b35",
+        "0x5ba6803b202e7a8225b72b8ac4c9f18779160335",
+        "0x244fb07c085e9fd3ad9f4bc24b63457ff4d96cfc"
+      ]
+    },
+    {
+      "address": "0x492cfa70f0ba9fa3478a409fe2f28637f3311929",
+      "name": "MarketMaker (MarketNumber1) [FeeCutter.TeamA]",
+      "verified_onchain": true,
+      "location": "contracts/core/MarketMaker_MarketNumber1/",
+      "role": "Automated market maker: AutoBuy()/AutoSell() (onlyCaller) swap STY<->USDT via PancakeRouter to defend a price band (openPrice*1.03). Also a burn-cut recipient of STY from FeeCutter.cutSellBurn.",
+      "sty_balance_live": 207979.07,
+      "usdt_balance_live": 75560.75,
+      "authorities_live": {
+        "owner (slot0)": "0x0000000000000000000000000000000000000000 (RENOUNCED)",
+        "bigpool (slot5)": "0xdb2dc12d9befaefa4c0ca0eafc86f9660b16143d",
+        "tradepair (slot6)": "0x2BE23D76...Ecc830"
+      }
+    },
+    {
+      "address": "0xdb2dc12d9befaefa4c0ca0eafc86f9660b16143d",
+      "name": "BigPool (OrderBIGPOOL)",
+      "verified_onchain": true,
+      "location": "contracts/core/BigPool_OrderBIGPOOL/",
+      "role": "Holds the bulk STY treasury (7.67M STY = ~77% of supply). AddLiqlidity(uint256) (onlyLocker) pulls USDT from caller, pairs it with BigPool's STY, adds LP to PancakeRouter with LP sent to the LiquidityHolder. No STY-rescue path.",
+      "sty_balance_live": 7669198.07,
+      "authorities_live": {
+        "owner (slot0)": "0x0000000000000000000000000000000000000000 (RENOUNCED)",
+        "_locker (slot2)": "0x758905b399f4216e9e3ff791eea16c05c91a1a88 (MinerRewardContract)",
+        "linqlidityholder (slot6)": "0xccb498f56eb836343a352e6169033e411d6891db"
+      }
+    },
+    {
+      "address": "0xccb498f56eb836343a352e6169033e411d6891db",
+      "name": "LiquidityHolder (LiqlidityHolder)",
+      "verified_onchain": true,
+      "location": "contracts/core/LiquidityHolder_LiqlidityHolder/",
+      "role": "Holds the STY/USDT LP tokens (~1.4M LP). ReedeemLP(...) lets a user remove liquidity, gated by ecrecover==_signer (an off-chain backend key). owner can takeOutErrorTransfer any token.",
+      "lp_balance_live": "0x1330606495a26d1995532 (~1.447M LP)",
+      "authorities_live": {
+        "owner (slot0)": "0x0000000000000000000000000000000000000000 (RENOUNCED)",
+        "_signer (slot4)": "0xdEb4E4ed40E8d29d10A326Fb4652fDaa55438284",
+        "caller (slot6)": "0xdb2dc12d9befaefa4c0ca0eafc86f9660b16143d (BigPool)"
+      }
+    },
+    {
+      "address": "0xf255a4e760e4ddce693a6ab6a240559b9909512c",
+      "name": "FeeOwnerCollege (Gnosis Safe proxy, 2-of-2)",
+      "verified_onchain": true,
+      "location": "contracts/authorities/FeeOwnerCollege_GnosisSafeProxy/",
+      "role": "Fee recipient (USDT from CutBuyFee/CutSellFee/CutProfit; STY from cutSellBurn). Gnosis Safe v1.3.0.",
+      "sty_balance_live": 356041.72,
+      "usdt_balance_live": 15843.82,
+      "singleton": "0x3e5c63644e683549055b9be8653de26e0b4cd36e",
+      "owners": ["0x765e80acb2714c15e94d8c5f21b9a3380ea28fd2", "0xddb8749dae93b976f73731bfc9e66663dab5fb1c"],
+      "threshold": 2
+    },
+    {
+      "address": "0x5205b84839fc5d650448d5732d87e65fb18bc522",
+      "name": "TeamB (Gnosis Safe proxy, 2-of-2)",
+      "verified_onchain": true,
+      "location": "contracts/authorities/TeamB_GnosisSafeProxy/",
+      "role": "Profit-cut USDT recipient (FeeCutter.CutProfit). Gnosis Safe v1.3.0.",
+      "usdt_balance_live": 3.11,
+      "singleton": "0x3e5c63644e683549055b9be8653de26e0b4cd36e",
+      "owners": ["0x765e80acb2714c15e94d8c5f21b9a3380ea28fd2", "0xddb8749dae93b976f73731bfc9e66663dab5fb1c"],
+      "threshold": 2
+    }
+  ],
+  "reward_subsystem_periphery": [
+    {"address": "0xcaecc8a5aa285b211de5af16b2b756e2e48721f5", "name": "NodeStoreH", "verified": false, "location": "contracts/unverified/NodeStoreH/", "role": "Helper referenced by FeeOwnerNode (be95492b). Hardcodes the same 3 STYNODE NFT addresses. Recovered by decompilation."},
+    {"address": "0xec1822f4ca5060d2740f1114b7ca44f3fba99933", "name": "STYNODE1 NFT", "verified": false, "location": "contracts/unverified/NodeNFT_STYNODE/", "role": "ERC721 node membership. owner=deployer 0xd8d76d04. totalSupply 376. Byte-identical to STYNODE2 clones.", "nft_owner": "0xd8d76d04da5ec32d84edbd560916b1edd2194e8f"},
+    {"address": "0x03151771ee8b335bb3c0772f8a35e03b323c7560", "name": "STYNODE2 NFT (clone)", "verified": false, "role": "ERC721, totalSupply 250. Byte-identical to STYNODE1.", "nft_owner": "0xd8d76d04da5ec32d84edbd560916b1edd2194e8f"},
+    {"address": "0x3d980e120e30e87fc203098785fff42681bfb743", "name": "STYNODE2 NFT (clone)", "verified": false, "role": "ERC721, totalSupply 71. Byte-identical to STYNODE1.", "nft_owner": "0xd8d76d04da5ec32d84edbd560916b1edd2194e8f"},
+    {"address": "0x3c9b8992d1c6897628f2a86c2d3a09d63923fd00", "name": "MinerReward_helper", "verified": false, "location": "contracts/unverified/MinerReward_helper/", "role": "Small (1454b) helper referenced by MinerRewardContract. Recovered by decompilation."},
+    {"address": "0x97c1d92534313bf466a3e410b7512abb578c075d", "name": "MinerReward reward-pool variant", "verified": false, "location": "contracts/unverified/MinerReward_rewardpool_variant_97c1d9/", "role": "3628b reward pool referenced by MinerRewardContract, distinct bytecode from FeeOwnerTeam-shape. Recovered by decompilation."},
+    {"address": "0x5f5149622e26ca0258472da46710ef22b96892e8", "name": "Reward treasury (Gnosis Safe proxy, 2-of-2)", "verified": true, "location": "contracts/authorities/RewardTreasury_5f5149_GnosisSafeProxy/", "role": "Referenced by MinerRewardContract (slot16). Gnosis Safe v1.3.0 with the SAME 2 owners as College/TeamB.", "singleton": "0x3e5c63644e683549055b9be8653de26e0b4cd36e", "owners": ["0x765e80acb2714c15e94d8c5f21b9a3380ea28fd2", "0xddb8749dae93b976f73731bfc9e66663dab5fb1c"], "threshold": 2},
+    {"address": "0x5ba6803b202e7a8225b72b8ac4c9f18779160335", "name": "reward-pool clone (FeeOwnerTeam-shape)", "verified": false, "role": "MinerReward slot14"},
+    {"address": "0x244fb07c085e9fd3ad9f4bc24b63457ff4d96cfc", "name": "reward-pool clone (FeeOwnerTeam-shape)", "verified": false, "role": "MinerReward slot15"}
+  ],
+  "external_canonical": [
+    {"address": "0x10ED43C718714eb63d5aA57B78B54704E256024E", "name": "PancakeRouter V2", "verified": true, "location": "contracts/external/PancakeRouterV2/"},
+    {"address": "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73", "name": "PancakeFactory V2", "verified": true, "location": "contracts/external/PancakeFactoryV2/"},
+    {"address": "0x55d398326f99059fF775485246999027B3197955", "name": "Binance-Peg BSC-USD (USDT)", "verified": true, "location": "contracts/external/USDT_BEP20/"},
+    {"address": "0x3e5c63644e683549055b9be8653de26e0b4cd36e", "name": "GnosisSafeL2 v1.3.0 singleton", "verified": true, "location": "contracts/external/GnosisSafe_Singleton_v1.3.0/"}
+  ],
+  "key_eoas": [
+    {"address": "0xd8d76d04da5ec32d84edbd560916b1edd2194e8f", "role": "Deployer. FeeCutter.superowner (can retarget all fee recipients + operators). Owner of all 3 STYNODE NFT contracts (can mint node NFTs => reward eligibility)."},
+    {"address": "0x33992f55832af553310489e1c808be007b117063", "role": "Owner of MinerRewardContract, FeeOwnerNode, FeeOwnerTeam (can set signer + reward parameters on the reward pools)."},
+    {"address": "0xa22ceb70389d918899111db96dc44be66ab6ae1b", "role": "Signer for the reward pools (MinerReward/Node/Team). Its ECDSA key authorizes reward claims. OFF-CHAIN KEY."},
+    {"address": "0xdEb4E4ed40E8d29d10A326Fb4652fDaa55438284", "role": "Signer for LiquidityHolder.ReedeemLP. Its ECDSA key authorizes LP redemptions => USDT payouts. OFF-CHAIN KEY."},
+    {"address": "0x765e80acb2714c15e94d8c5f21b9a3380ea28fd2", "role": "Gnosis Safe owner #1 (College / TeamB / RewardTreasury multisig, 2-of-2)."},
+    {"address": "0xddb8749dae93b976f73731bfc9e66663dab5fb1c", "role": "Gnosis Safe owner #2 (College / TeamB / RewardTreasury multisig, 2-of-2)."}
+  ]
+}

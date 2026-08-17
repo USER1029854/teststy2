@@ -1,0 +1,67 @@
+{
+  "0x0d3523bb": [],
+  "0x10a2cdbd": [],
+  "0x09329d92": [],
+  "0x27838905": [],
+  "0x6e247371": [],
+  "0x2a1e90ef": [],
+  "0x595596ef": [],
+  "0x1c4fcb22": [
+    "setAddress(address,address,address,address,address,address,address)"
+  ],
+  "0x2c9ad7e0": [],
+  "0x217629df": [],
+  "0x4a2ce84d": [],
+  "0x32b5f0d6": [],
+  "0x2ed046fe": [],
+  "0x71591565": [],
+  "0x6564c61e": [],
+  "0x50138ae9": [],
+  "0x75231f74": [],
+  "0x7584db29": [],
+  "0x9cae6eae": [
+    "setCaller(address,bool)"
+  ],
+  "0x6cfb6bf9": [
+    "setAddresses(address,address,address,address,address,address)"
+  ],
+  "0x7cf8db30": [],
+  "0xb0fa73d9": [],
+  "0x3413f7bd": [],
+  "0x558a7297": [
+    "setOperator(address,bool)"
+  ],
+  "0x83a33fbe": [],
+  "0xa2992488": [],
+  "0x333d58f4": [],
+  "0x56a7d746": [],
+  "0xc3ce5856": [],
+  "0x9e94f03d": [],
+  "0x99522174": [],
+  "0x9adea95a": [],
+  "0xd39bef16": [],
+  "0xbe95492b": [],
+  "0x8ac77ea6": [],
+  "0xd0e5c50e": [],
+  "0xdd467015": [],
+  "0xe1917caa": [],
+  "0xed94743c": [],
+  "0xb13d486e": [],
+  "0xf782bb1a": [],
+  "0xef6597c3": [],
+  "0x752edf91": [],
+  "0xbe8531a9": [],
+  "0xd7c31176": [],
+  "0x7044ba12": [],
+  "0xf43c67e9": [],
+  "0xf5089a10": [],
+  "0xb9a02901": [
+    "claim(uint256,uint256,uint256,string)"
+  ],
+  "0xc6d716f2": [
+    "takeOutErrorTransfer(address,address,uint256)"
+  ],
+  "0xe6b1258f": [],
+  "0xecf93426": [],
+  "0xdcded11a": []
+}
